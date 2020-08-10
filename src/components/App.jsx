@@ -8,7 +8,7 @@ class App extends Component {
     searchQuery: "",
     page: 1,
     error: "",
-    // loading: false,
+    loading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -25,14 +25,13 @@ class App extends Component {
     pixabayApi
       .fetchImagesWithQuery(searchQuery, page)
       .then((pictures) =>
-        // console.log("pictures: ", pictures)
         this.setState({
-          galleryImages: pictures,
-          // .map((picture) => ({
-          //   id: picture.id,
-          //   webformatURL: picture.webformatURL,
-          //   largeImageURL: picture.largeImageURL,
-          // })),
+          galleryImages: pictures.map((picture) => ({
+            id: picture.id,
+            tags: picture.tags,
+            webformatURL: picture.webformatURL,
+            largeImageURL: picture.largeImageURL,
+          })),
         })
       )
       .catch((error) => this.setState({ error }))
@@ -40,7 +39,6 @@ class App extends Component {
   };
 
   handleSubmitFromQuery = (queryValue) => {
-    console.log("value", queryValue);
     this.setState({
       searchQuery: queryValue,
     });
@@ -52,18 +50,20 @@ class App extends Component {
         <Searchbar onSubmit={this.handleSubmitFromQuery} />
 
         <ul className="ImageGallery">
-          <li className="ImageGalleryItem">
-            <img src="" alt="" className="ImageGalleryItem-image" />
-          </li>
+          {this.state.galleryImages.map(
+            ({ id, tags, webformatURL, largeImageURL }) => (
+              <li key={id} className="ImageGalleryItem">
+                <img
+                  src={webformatURL}
+                  alt={tags}
+                  className="ImageGalleryItem-image"
+                />
+              </li>
+            )
+          )}
         </ul>
       </>
     );
-
-    // <Searchbar>,
-    // <ImageGallery>,
-    // <ImageGalleryItem>,
-    // <Loader>,
-    // <Button> и <Modal></Modal>
   }
 }
 

@@ -8,13 +8,12 @@ class Searchbar extends Component {
 
   handleChange = (event) => {
     this.setState({
-      searchQuery: event.target.value,
+      query: event.target.value,
     });
   };
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log("QUERY IN SEARCHBAR", this.state.query);
 
     this.props.onSubmit(this.state.query);
 
@@ -26,12 +25,8 @@ class Searchbar extends Component {
   render() {
     return (
       <header className={styles.Searchbar}>
-        <form className={styles.SearchForm}>
-          <button
-            type="submit"
-            className={styles.SearchFormButton}
-            onSubmit={this.handleSubmit}
-          >
+        <form className={styles.SearchForm} onSubmit={this.handleSubmit}>
+          <button type="submit" className={styles.SearchFormButton}>
             <span className={styles.SearchFormButtonLabel}>Search</span>
           </button>
 
