@@ -1,38 +1,70 @@
 import React, { Component } from "react";
+import Searchbar from "./Searchbar/Searchbar";
 import pixabayApi from "../services/PixabayApi";
 
 class App extends Component {
   state = {
-    id: null,
-    webformatURL: "",
-    largeImageURL: "",
+    galleryImages: [],
+    searchQuery: "",
+    page: 1,
+    error: "",
+    loading: false,
   };
 
-  responseFromAPI = (query) => {
-    pixabayApi
-      .fetchImagesWithQuery(query)
-      .then((response) => response[0].webformatURL);
+  // componentDidUpdate(prevProps, prevState) {
+  //   const prevQuery = prevState.searchQuery;
+  //   const nextQuery = this.state.searchQuery;
+
+  //   /*DOING FETCH IF NEW DATA IN QUERY*/
+  //   prevQuery !== nextQuery && this.fetchPicturesFromApi();
+  // }
+
+  // fetchPicturesFromApi = () => {
+  //   const { galleryImages, searchQuery, page } = this.state;
+
+  //   pixabayApi
+  //     .fetchImagesWithQuery(searchQuery, page)
+  //     .then(
+  //       (pictures) => console.log("pictures: ", pictures)
+  //       // this.setState({
+  //       //   galleryImages: pictures
+  //       //   // .map((picture) => ({
+  //       //   //   id: picture.id,
+  //       //   //   webformatURL: picture.webformatURL,
+  //       //   //   largeImageURL: picture.largeImageURL,
+  //       //   // })),
+  //       // })
+  //     )
+  //     .catch((error) => this.setState({ error }))
+  //     .finally(() => this.setState({ loading: false }));
+  // };
+
+  handleSubmitFromQuery = (value) => {
+    console.log("value", value);
+    this.setState({
+      galleryImages: [],
+      searchQuery: value,
+    });
   };
 
   render() {
-    const webImage = this.responseFromAPI("cats");
-    console.log("webImage", webImage);
-
     return (
-      <div>
-        <img src={webImage} alt="" />
-      </div>
+      <>
+        <Searchbar onSubmit={this.handleSubmitFromQuery} />
+
+        <ul className="ImageGallery">
+          <li className="ImageGalleryItem">
+            <img src="" alt="" className="ImageGalleryItem-image" />
+          </li>
+        </ul>
+      </>
     );
 
-    // <Searchbar>, <ImageGallery>, <ImageGalleryItem>, <Loader>, <Button> и <Modal></Modal>
-
-    // fetchImagesWithQuery
-
-    // В ответе от апи приходит массив объектов, в которых тебе интересны только следущие свойства.
-
-    // id - уникальный идентификатор
-    // webformatURL - ссылка на маленькое изображение для списка карточек
-    // largeImageURL - ссылка на большое изображение для модального окна
+    // <Searchbar>,
+    // <ImageGallery>,
+    // <ImageGalleryItem>,
+    // <Loader>,
+    // <Button> и <Modal></Modal>
   }
 }
 
