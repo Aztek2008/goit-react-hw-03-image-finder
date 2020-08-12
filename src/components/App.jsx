@@ -34,7 +34,6 @@ class App extends Component {
     pixabayApi
       .fetchImagesWithQuery(searchQuery, page)
       .then((pictures) =>
-        // this.setState({ galleryImages: pictures })
         this.setState((prevState) => ({
           galleryImages: [...prevState.galleryImages, ...pictures],
           page: prevState.page + 1,
@@ -45,13 +44,10 @@ class App extends Component {
   };
 
   handleSubmitFromQuery = (queryValue) => {
-    console.log("queryValue", queryValue);
-    const value = queryValue;
-
     this.setState({
-      searchQuery: value,
+      searchQuery: queryValue,
       page: 1,
-      articles: [],
+      galleryImages: [],
     });
   };
 
@@ -69,7 +65,7 @@ class App extends Component {
         {loading && <Loader />}
 
         {galleryImages.length > 0 && (
-          <Button thisClicked={this.handleSubmitFromQuery} />
+          <Button thisClicked={this.fetchPicturesFromApi} />
         )}
         {/* <Loader> и <Modal></Modal> */}
       </>
