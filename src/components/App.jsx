@@ -1,13 +1,16 @@
 import React, { Component } from "react";
 import Searchbar from "./Searchbar/Searchbar";
 import pixabayApi from "../services/PixabayApi";
+import ImageGallery from "./ImageGallery/ImageGallery";
+import Button from "./Button/Button";
+import Loader from "./Loader/Loader";
 
 class App extends Component {
   state = {
     galleryImages: [],
     searchQuery: "",
     page: 1,
-    error: "",
+    error: null,
     loading: false,
   };
 
@@ -15,53 +18,60 @@ class App extends Component {
     const prevQuery = prevState.searchQuery;
     const nextQuery = this.state.searchQuery;
 
-    /*DOING FETCH IF NEW DATA IN QUERY*/
     prevQuery !== nextQuery && this.fetchPicturesFromApi();
+
+    // window.scrollTo({
+    //   top: document.documentElement.scrollHeight,
+    //   behavior: 'smooth',
+    // });
   }
 
   fetchPicturesFromApi = () => {
     const { searchQuery, page } = this.state;
 
+    this.setState({ loading: true });
+
     pixabayApi
       .fetchImagesWithQuery(searchQuery, page)
       .then((pictures) =>
-        this.setState({
-          galleryImages: pictures.map((picture) => ({
-            id: picture.id,
-            tags: picture.tags,
-            webformatURL: picture.webformatURL,
-            largeImageURL: picture.largeImageURL,
-          })),
-        })
+        // this.setState({ galleryImages: pictures })
+        this.setState((prevState) => ({
+          galleryImages: [...prevState.galleryImages, ...pictures],
+          page: prevState.page + 1,
+        }))
       )
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }));
   };
 
   handleSubmitFromQuery = (queryValue) => {
+    console.log("queryValue", queryValue);
+    const value = queryValue;
+
     this.setState({
-      searchQuery: queryValue,
+      searchQuery: value,
+      page: 1,
+      articles: [],
     });
   };
 
   render() {
+    const { error, galleryImages, loading } = this.state;
+
     return (
       <>
+        {error && <p>Something wrong: {error.message} </p>}
+
         <Searchbar onSubmit={this.handleSubmitFromQuery} />
 
-        <ul className="ImageGallery">
-          {this.state.galleryImages.map(
-            ({ id, tags, webformatURL, largeImageURL }) => (
-              <li key={id} className="ImageGalleryItem">
-                <img
-                  src={webformatURL}
-                  alt={tags}
-                  className="ImageGalleryItem-image"
-                />
-              </li>
-            )
-          )}
-        </ul>
+        <ImageGallery images={galleryImages} />
+
+        {loading && <Loader />}
+
+        {galleryImages.length > 0 && (
+          <Button thisClicked={this.handleSubmitFromQuery} />
+        )}
+        {/* <Loader> и <Modal></Modal> */}
       </>
     );
   }
