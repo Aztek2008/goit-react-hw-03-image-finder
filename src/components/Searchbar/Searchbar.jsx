@@ -1,13 +1,17 @@
 import React, { Component } from "react";
 import styles from "./Searchbar.module.css";
+import PropTypes from "prop-types";
 
 class Searchbar extends Component {
+  PropTypes = {
+    query: PropTypes.string.isRequired,
+  };
+
   state = {
     query: "",
   };
 
   handleChange = (event) => {
-    console.log("event.target.value", event.target.value);
     this.setState({
       query: event.target.value,
     });
@@ -34,6 +38,7 @@ class Searchbar extends Component {
             type="text"
             autoComplete="off"
             autoFocus
+            value={this.state.query}
             placeholder="Search images and photos"
             onChange={this.handleChange}
           />
